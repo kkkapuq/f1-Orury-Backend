@@ -1,6 +1,12 @@
 #!/bin/bash
-BUILD_JAR=$(ls /home/ec2-user/orury/orury-client/build/libs/orury-client-0.0.1-SNAPSHOT.jar)
-BATCH_JAR=$(ls /home/ec2-user/orury/orury-batch/build/libs/orury-batch-0.0.1-SNAPSHOT.jar)
+if [ "$1" == "refs/heads/main" ]; then
+  # main 브랜치일 때의 처리
+  BUILD_JAR=$(ls /home/ec2-user/orury/orury-client/build/libs/orury-client-0.0.1-SNAPSHOT.jar)
+  BATCH_JAR=$(ls /home/ec2-user/orury/orury-batch/build/libs/orury-batch-0.0.1-SNAPSHOT.jar)
+else
+  BUILD_JAR=$(ls /home/ec2-user/orury/orury-client/build/libs/dev/orury-client-0.0.1-SNAPSHOT.jar)
+  BATCH_JAR=$(ls /home/ec2-user/orury/orury-batch/build/libs/dev/orury-batch-0.0.1-SNAPSHOT.jar)
+fi
 
 JAR_NAME=$(basename $BUILD_JAR)
 BATCH_JAR_NAME=$(basename $BATCH_JAR)
