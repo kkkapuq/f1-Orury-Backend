@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "feature/#271_setting_auto_deploy" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "feature/#271_setting_auto_deploy" ]
 
 permissions:
   contents: read
