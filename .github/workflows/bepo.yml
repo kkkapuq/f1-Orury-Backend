@@ -6,6 +6,8 @@ env:
   CODE_DEPLOY_APP_NAME: orury-code-deploy
   DEPLOYMENT_GROUP_NAME: orury-code-deploy-group
   DOCKER_ENV: .env
+  PROD_PORT: 8085
+  DEV_PORT: 8087
 
 on:
   push:
@@ -47,7 +49,11 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew build
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            ./gradlew build -Pprofile=prod
+          elif [[ "${{ github.ref }}" == "refs/heads/feature/#271_setting_auto_deploy" ]]; then
+            ./gradlew build -Pprofile=dev
+          fi
         shell: bash
 
       - name: Make zip file
@@ -57,8 +63,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }} # 등록한 Github Secret이 자동으로 불려온다.
-          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }} # 등록한 Github Secret이 자동으로 불려온다.
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
           aws-region: ap-northeast-2
 
       - name: Upload to S3
