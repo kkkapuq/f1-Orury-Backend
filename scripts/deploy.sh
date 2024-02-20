@@ -1,11 +1,11 @@
 #!/bin/bash
 if [ "$1" == "refs/heads/main" ]; then
   # main 브랜치일 때의 처리
-  BUILD_JAR=$(ls /home/ec2-user/orury/orury-client/build/libs/orury-client-0.0.1-SNAPSHOT.jar)
-  BATCH_JAR=$(ls /home/ec2-user/orury/orury-batch/build/libs/orury-batch-0.0.1-SNAPSHOT.jar)
-else
-  BUILD_JAR=$(ls /home/ec2-user/orury/orury-client/build/libs/dev/orury-client-0.0.1-SNAPSHOT.jar)
-  BATCH_JAR=$(ls /home/ec2-user/orury/orury-batch/build/libs/dev/orury-batch-0.0.1-SNAPSHOT.jar)
+  BUILD_JAR=$(ls /home/ec2-user/backend/api/prod/jar/orury-client/build/libs/orury-client-0.0.1-SNAPSHOT.jar)
+  BATCH_JAR=$(ls /home/ec2-user/backend/batch/prod/jar/orury-batch/build/libs/orury-batch-0.0.1-SNAPSHOT.jar)
+elif [ "$1" == "refs/heads/feature/#271_setting_auto_deploy" ]; then
+  BUILD_JAR=$(ls /home/ec2-user/backend/api/dev/jar/orury-client/build/libs/dev/orury-client-0.0.1-SNAPSHOT.jar)
+  BATCH_JAR=$(ls /home/ec2-user/backend/batch/dev/jar/orury-batch/build/libs/dev/orury-batch-0.0.1-SNAPSHOT.jar)
 fi
 
 JAR_NAME=$(basename $BUILD_JAR)
