@@ -7,6 +7,7 @@ elif [ "$1" == "refs/heads/feature/#271_setting_auto_deploy" ]; then
   BUILD_JAR=$(ls /home/ec2-user/backend/api/dev/jar/orury-client/build/libs/dev/orury-client-0.0.1-SNAPSHOT.jar)
   BATCH_JAR=$(ls /home/ec2-user/backend/batch/dev/jar/orury-batch/build/libs/dev/orury-batch-0.0.1-SNAPSHOT.jar)
 fi
+PID=$(sudo lsof -t -i:8087)
 
 JAR_NAME=$(basename $BUILD_JAR)
 BATCH_JAR_NAME=$(basename $BATCH_JAR)
@@ -32,14 +33,23 @@ echo "> 현재 실행중인 애플리케이션 pid 확인" >> /home/ec2-user/oru
 CURRENT_PID=$(pgrep -f $JAR_NAME)
 BATCH_PID=$(pgrep -f $BATCH_JAR_NAME)
 
-if [ -z "$CURRENT_PID" ]
+# PID가 존재하면 kill
+if [ -z "$PID" ]
 then
-  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ec2-user/orury/log/deploy_success.log
+  echo "> 해당 포트를 사용하는 애플리케이션 없음"
 else
-  echo "> kill -9 $CURRENT_PID" >> /home/ec2-user/orury/log/deploy_success.log
-  sudo kill -9 $CURRENT_PID
+  echo "> kill -9 $PID"
+  sudo kill -9 $PID
   sleep 5
 fi
+#if [ -z "$CURRENT_PID" ]
+#then
+#  echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다." >> /home/ec2-user/orury/log/deploy_success.log
+#else
+#  echo "> kill -9 $CURRENT_PID" >> /home/ec2-user/orury/log/deploy_success.log
+#  sudo kill -9 $CURRENT_PID
+#  sleep 5
+#fi
 
 if [ -z "$BATCH_PID" ]
 then

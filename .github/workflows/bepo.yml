@@ -50,9 +50,11 @@ jobs:
       - name: Build with Gradle
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            ./gradlew build -Pprofile=prod
-          elif [[ "${{ github.ref }}" == "refs/heads/feature/#271_setting_auto_deploy" ]]; then
-            ./gradlew build -Pprofile=dev
+            -Dspring.profiles.active=prod
+            ./gradlew build -Pprod
+          else
+            -Dspring.profiles.active=dev
+            ./gradlew build -Pdev
           fi
         shell: bash
 
