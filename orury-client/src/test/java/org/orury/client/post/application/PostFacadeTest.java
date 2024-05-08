@@ -132,19 +132,19 @@ class PostFacadeTest extends FacadeTest {
     void given_SearchWordAndCursor_When_GetPostsBySearchWord_Then_ReturnPostsResponseList() {
         //given
         var searchWord = "searchWord";
-        var cursor = 1L;
+        var cursor = 0L;
         var posts = List.of(createPostDto(1L), createPostDto(2L), createPostDto(3L));
-        given(postService.getPostDtosBySearchWord(searchWord, cursor, PageRequest.of(0, 10))).willReturn(posts);
+        given(postService.getPostDtosBySearchWord(searchWord, cursor, null)).willReturn(posts);
 
         //when
-        var actual = postFacade.getPostsBySearchWord(searchWord, cursor);
+        var actual = postFacade.getPostsBySearchWord(searchWord, cursor, null);
 
         //then
         assertThat(actual)
                 .isNotNull()
                 .hasSize(posts.size())
                 .isEqualTo(posts.stream().map(PostsResponse::of).collect(Collectors.toList()));
-        then(postService).should(times(1)).getPostDtosBySearchWord(searchWord, cursor, PageRequest.of(0, 10));
+        then(postService).should(times(1)).getPostDtosBySearchWord(searchWord, cursor, null);
     }
 
     @DisplayName("페이지 정보를 받아 인기 게시글 목록을 조회한다.")

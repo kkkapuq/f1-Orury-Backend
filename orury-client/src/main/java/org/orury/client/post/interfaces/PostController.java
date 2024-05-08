@@ -53,8 +53,12 @@ public class PostController {
 
     @Operation(summary = "검색어에 따른 게시글 목록 조회", description = "검색어와 cursor값을 받아, '검색어와 cursor값에 따른 다음 게시글 목록'과 'cursor값(목록의 마지막 게시글 id / 조회된 게시글 없다면 -1L)'을 돌려준다.")
     @GetMapping
-    public ApiResponse getPostsBySearchWord(@RequestParam String searchWord, @RequestParam Long cursor) {
-        var posts = postFacade.getPostsBySearchWord(searchWord, cursor);
+    public ApiResponse getPostsBySearchWord(
+            @RequestParam String searchWord,
+            @RequestParam Long cursor,
+            @RequestParam(required = false) Integer likeCount
+    ) {
+        var posts = postFacade.getPostsBySearchWord(searchWord, cursor, likeCount);
         PostsWithCursorResponse response = PostsWithCursorResponse.of(posts, cursor);
         return ApiResponse.of(POSTS_READ.getMessage(), response);
     }

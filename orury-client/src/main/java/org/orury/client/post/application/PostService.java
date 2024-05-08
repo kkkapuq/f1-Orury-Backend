@@ -11,7 +11,7 @@ import java.util.List;
 public interface PostService {
     List<PostDto> getPostDtosByCategory(int category, Long cursor, Pageable pageable);
 
-    List<PostDto> getPostDtosBySearchWord(String searchWord, Long cursor, Pageable pageable);
+    List<PostDto> getPostDtosBySearchWord(String searchWord, Long cursor, Integer lastLikeCount);
 
     List<PostDto> getPostDtosByUserId(Long userId, Long cursor, Pageable pageable);
 

@@ -71,20 +71,55 @@ class PostReaderTest extends InfrastructureTest {
         assertEquals(10, result.size());
     }
 
+    @DisplayName("제목 또는 내용에 검색어가 포함된 게시글과 첫번째 커서로 목록 조회(인기순) - 성공")
+    @Test
+    void when_FindByTitleContainingOrContentContainingOrderByLikeCountDescWithFirstCursor_Then_Success() {
+        // given
+        String searchWord = "test";
+        Long cursor = NumberConstants.FIRST_CURSOR;
+        int likeCount = 10;
+        given(postRepository.findBySearchWordOrderByLikeCountDesc(searchWord, pageable)).willReturn(expectedPosts);
+
+        // when
+        List<Post> result = postReader.findBySearchWordOrderByLikeCountDesc(searchWord, cursor, likeCount);
+
+        // then
+        assertSame(expectedPosts, result);
+        verify(postRepository, times(1)).findBySearchWordOrderByLikeCountDesc(searchWord, pageable);
+    }
+
+    @DisplayName("제목 또는 내용에 검색어가 포함된 게시글과 첫번째 아닌 커서로 목록 조회(인기순) - 성공")
+    @Test
+    void when_FindByTitleContainingOrContentContainingOrderByLikeCountDescWithNonFirstCursor_Then_Success() {
+        // given
+        String searchWord = "test";
+        Long cursor = 10L;
+        int likeCount = 10;
+        given(postRepository.findBySearchWordOrderByLikeCountDescWithCursor(searchWord, cursor, likeCount, pageable)).willReturn(expectedPosts);
+
+        // when
+        List<Post> result = postReader.findBySearchWordOrderByLikeCountDesc(searchWord, cursor, likeCount);
+
+        // then
+        assertSame(expectedPosts, result);
+        verify(postRepository, times(1)).findBySearchWordOrderByLikeCountDescWithCursor(searchWord, cursor, likeCount, pageable);
+    }
+
+
     @DisplayName("제목 또는 내용에 검색어가 포함된 게시글과 첫번째 커서로 목록 조회 - 성공")
     @Test
     void when_FindByTitleContainingOrContentContainingOrderByIdDescWithFirstCursor_Then_Success() {
         // given
         String searchWord = "test";
         Long cursor = NumberConstants.FIRST_CURSOR;
-        given(postRepository.findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, searchWord, pageable)).willReturn(expectedPosts);
+        given(postRepository.findBySearchWordOrderByIdDesc(searchWord, pageable)).willReturn(expectedPosts);
 
         // when
-        List<Post> result = postReader.findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable);
+        List<Post> result = postReader.findBySearchWordOrderByIdDesc(searchWord, cursor);
 
         // then
         assertSame(expectedPosts, result);
-        verify(postRepository, times(1)).findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, searchWord, pageable);
+        verify(postRepository, times(1)).findBySearchWordOrderByIdDesc(searchWord, pageable);
     }
 
     @DisplayName("제목 또는 내용에 검색어가 포함된 게시글과 첫번째 아닌 커서로 목록 조회 - 성공")
@@ -93,14 +128,14 @@ class PostReaderTest extends InfrastructureTest {
         // given
         String searchWord = "test";
         Long cursor = 10L;
-        given(postRepository.findByIdLessThanAndTitleContainingOrIdLessThanAndContentContainingOrderByIdDesc(cursor, searchWord, cursor, searchWord, pageable)).willReturn(expectedPosts);
+        given(postRepository.findBySearchWordOrderByIdDescWithCursor(searchWord, cursor, pageable)).willReturn(expectedPosts);
 
         // when
-        List<Post> result = postReader.findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable);
+        List<Post> result = postReader.findBySearchWordOrderByIdDesc(searchWord, cursor);
 
         // then
         assertSame(expectedPosts, result);
-        verify(postRepository, times(1)).findByIdLessThanAndTitleContainingOrIdLessThanAndContentContainingOrderByIdDesc(cursor, searchWord, cursor, searchWord, pageable);
+        verify(postRepository, times(1)).findBySearchWordOrderByIdDescWithCursor(searchWord, cursor, pageable);
     }
 
     @DisplayName("유저 id로 유저가 작성한 가장 최근 게시글 목록 조회 - 성공")

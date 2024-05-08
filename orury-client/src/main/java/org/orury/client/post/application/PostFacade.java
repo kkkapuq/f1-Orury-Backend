@@ -59,9 +59,8 @@ public class PostFacade {
                 .toList();
     }
 
-    public List<PostsResponse> getPostsBySearchWord(String searchWord, Long cursor) {
-        var pageRequest = PageRequest.of(0, POST_PAGINATION_SIZE);
-        return postService.getPostDtosBySearchWord(searchWord, cursor, pageRequest)
+    public List<PostsResponse> getPostsBySearchWord(String searchWord, Long cursor, Integer lastLikeCount) {
+        return postService.getPostDtosBySearchWord(searchWord, cursor, lastLikeCount)
                 .stream()
                 .map(PostsResponse::of)
                 .toList();

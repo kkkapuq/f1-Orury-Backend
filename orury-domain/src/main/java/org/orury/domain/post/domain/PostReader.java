@@ -11,11 +11,13 @@ import java.util.Optional;
 public interface PostReader {
     List<Post> findByCategoryOrderByIdDesc(int category, Long cursor, Pageable pageable);
 
-    List<Post> findByTitleContainingOrContentContainingOrderByIdDesc(String searchWord, Long cursor, Pageable pageable);
-
     List<Post> findByUserIdOrderByIdDesc(Long userId, Long cursor, Pageable pageable);
 
     Page<Post> findByLikeCountGreaterDescAndCreatedAtDesc(Pageable pageable);
+
+    List<Post> findBySearchWordOrderByIdDesc(String searchWord, Long cursor);
+
+    List<Post> findBySearchWordOrderByLikeCountDesc(String searchWord, Long cursor, int lastLikeCount);
 
     Optional<Post> findById(Long id);
 

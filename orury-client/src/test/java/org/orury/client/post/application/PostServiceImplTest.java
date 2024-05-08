@@ -262,14 +262,12 @@ class PostServiceImplTest extends ServiceTest {
         assertEquals(postDtos.size(), resultPostDtos.size());
     }
 
-    //
     @Test
     @DisplayName("검색어 검색 시 첫 페이지인 경우, 최대 10개까지 게시글을 가져온다.")
     void when_RetrieveSearchWordWithFirstCursor_Then_GetMaximum10Posts() {
         // given
         Long cursor = 0L;
         String searchWord = "title";
-        Pageable pageable = PageRequest.of(0, 10);
 
         List<PostDto> postDtos = Arrays.asList(
                 createPostDto(1L, 1L),
@@ -296,13 +294,13 @@ class PostServiceImplTest extends ServiceTest {
                 createPost(10L, 2L)
         );
 
-        when(postReader.findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable)).thenReturn(posts);
+        when(postReader.findBySearchWordOrderByIdDesc(searchWord, cursor)).thenReturn(posts);
 
         // when
-        List<PostDto> resultPostDtos = postService.getPostDtosBySearchWord(searchWord, cursor, PageRequest.of(0, 10));
+        List<PostDto> resultPostDtos = postService.getPostDtosBySearchWord(searchWord, cursor, null);
 
         // then
-        verify(postReader).findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable);
+        verify(postReader).findBySearchWordOrderByIdDesc(searchWord, cursor);
         assertEquals(postDtos.size(), resultPostDtos.size());
     }
 
@@ -312,7 +310,6 @@ class PostServiceImplTest extends ServiceTest {
         // given
         Long cursor = 2L;
         String searchWord = "title";
-        Pageable pageable = PageRequest.of(0, 10);
 
         List<PostDto> postDtos = Arrays.asList(
                 createPostDto(1L, 1L),
@@ -323,13 +320,13 @@ class PostServiceImplTest extends ServiceTest {
                 createPost(2L, 1L)
         );
 
-        when(postReader.findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable)).thenReturn(posts);
+        when(postReader.findBySearchWordOrderByIdDesc(searchWord, cursor)).thenReturn(posts);
 
         // when
-        List<PostDto> resultPostDtos = postService.getPostDtosBySearchWord(searchWord, cursor, PageRequest.of(0, 10));
+        List<PostDto> resultPostDtos = postService.getPostDtosBySearchWord(searchWord, cursor, null);
 
         // then
-        verify(postReader).findByTitleContainingOrContentContainingOrderByIdDesc(searchWord, cursor, pageable);
+        verify(postReader).findBySearchWordOrderByIdDesc(searchWord, cursor);
         assertEquals(postDtos.size(), resultPostDtos.size());
     }
 
