@@ -28,8 +28,8 @@ public record GymResponse(
         boolean isLike,
         String gymType,
         List<GymReviewStatistics.TotalReviewChart.ReviewCount> barChartData,
-        List<GymReviewStatistics.MonthlyReviewChart.MonthlyReviewCount> lineChartData
-) {
+        List<GymReviewStatistics.MonthlyReviewChart.MonthlyReviewCount> lineChartData,
+        String remark) {
     public static GymResponse of(
             GymDto gymDto,
             boolean doingBusiness,
@@ -60,7 +60,8 @@ public record GymResponse(
                 isLike,
                 gymDto.gymType().getDescription(),
                 gymReviewStatistics.barChartData(),
-                gymReviewStatistics.lineChartData()
+                gymReviewStatistics.lineChartData(),
+                gymDto.remark()
         );
     }
 
