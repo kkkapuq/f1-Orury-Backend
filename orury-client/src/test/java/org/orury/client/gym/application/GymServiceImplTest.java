@@ -10,6 +10,7 @@ import org.orury.domain.gym.domain.dto.GymDto;
 import org.orury.domain.gym.domain.dto.GymLikeDto;
 import org.orury.domain.gym.domain.entity.Gym;
 import org.orury.domain.gym.domain.entity.GymLikePK;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -123,6 +124,35 @@ class GymServiceImplTest extends ServiceTest {
         assertEquals(expectedGymDtos, actualGymDtos);
         then(gymReader).should(times(1))
                 .findGymsBySearchWord(anyString());
+    }
+
+    @Test
+    @DisplayName("유저id와 cursor에 대해, 해당 유저가 좋아요한 GymDto 목록을 반환한다.")
+    void should_RetrieveGymDtoListByUserLiked() {
+        // given
+        Long userId = 98L;
+        Long cursor = 20L;
+        List<Gym> gyms = List.of(
+                createGym().id(19L).build().get(),
+                createGym().id(14L).build().get(),
+                createGym().id(3L).build().get()
+        );
+        List<GymDto> expectedGymDtos = List.of(
+                GymDto.from(gyms.get(0)),
+                GymDto.from(gyms.get(1)),
+                GymDto.from(gyms.get(2))
+        );
+
+        given(gymReader.findGymsByUserLiked(userId, cursor, PageRequest.of(0, 15)))
+                .willReturn(gyms);
+
+        // when
+        List<GymDto> actualGymDtos = gymService.getGymDtosByUserLiked(userId, cursor);
+
+        // then
+        assertEquals(expectedGymDtos, actualGymDtos);
+        then(gymReader).should(times(1))
+                .findGymsByUserLiked(anyLong(), anyLong(), any());
     }
 
     @Test

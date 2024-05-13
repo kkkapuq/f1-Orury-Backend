@@ -6,9 +6,11 @@ import org.orury.client.config.FacadeTest;
 import org.orury.client.global.WithCursorResponse;
 import org.orury.client.user.interfaces.request.UserInfoRequest;
 import org.orury.client.user.interfaces.response.MyCommentResponse;
+import org.orury.client.user.interfaces.response.MyGymResponse;
 import org.orury.client.user.interfaces.response.MyPostResponse;
 import org.orury.client.user.interfaces.response.MyReviewResponse;
 import org.orury.domain.comment.domain.dto.CommentDto;
+import org.orury.domain.gym.domain.dto.GymDto;
 import org.orury.domain.post.domain.dto.PostDto;
 import org.orury.domain.review.domain.dto.ReviewDto;
 import org.orury.domain.user.domain.dto.UserDto;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.orury.client.ClientFixtureFactory.TestReportRequest.createReportRequest;
 import static org.orury.client.ClientFixtureFactory.TestUserInfoRequest.createUserInfoRequest;
 import static org.orury.domain.CommentDomainFixture.TestCommentDto.createCommentDto;
+import static org.orury.domain.GymDomainFixture.TestGymDto.createGymDto;
 import static org.orury.domain.PostDomainFixture.TestPostDto.createPostDto;
 import static org.orury.domain.ReviewDomainFixture.TestReviewDto.createReviewDto;
 import static org.orury.domain.UserDomainFixture.TestUserDto.createUserDto;
@@ -164,6 +167,32 @@ class UserFacadeTest extends FacadeTest {
         //then
         assertThat(actualResponse).isEqualTo(response);
         then(commentService).should(times(1)).getCommentDtosByUserId(anyLong(), anyLong());
+    }
+
+    @Test
+    @DisplayName("getGymsByUserLiked(Long id, Long cursor) test: id, cursor 값을 입력받아 내가 저장한 암장목록을 반환한다. [성공] ")
+    void should_returnWithGymsCursorResponse() {
+        //given
+        Long userId = 1L;
+        Long cursor = 0L;
+
+        List<GymDto> gymDtos = new ArrayList<>();
+        for (int i = 10; i >= 1; i--) {
+            gymDtos.add(createGymDto((long) i).build().get());
+        }
+
+        WithCursorResponse<MyGymResponse> response = WithCursorResponse.of(gymDtos.stream()
+                .map(MyGymResponse::of)
+                .toList(), cursor);
+
+        given(gymService.getGymDtosByUserLiked(anyLong(), anyLong())).willReturn(gymDtos);
+
+        //when
+        WithCursorResponse<MyGymResponse> actualResponse = userFacade.getGymsByUserLiked(userId, cursor);
+
+        //then
+        assertThat(actualResponse).isEqualTo(response);
+        then(gymService).should(times(1)).getGymDtosByUserLiked(anyLong(), anyLong());
     }
 
     @Test
