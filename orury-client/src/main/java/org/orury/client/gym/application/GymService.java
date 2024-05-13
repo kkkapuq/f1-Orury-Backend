@@ -13,6 +13,8 @@ public interface GymService {
 
     List<GymDto> getGymDtosByAreaGridOrderByDistanceAsc(AreaGrid areaGrid, float latitude, float longitude);
 
+    List<GymDto> getGymDtosByUserLiked(Long userId, Long cursor);
+
     void createGymLike(GymLikeDto gymLikeDto);
 
     void deleteGymLike(GymLikeDto gymLikeDto);

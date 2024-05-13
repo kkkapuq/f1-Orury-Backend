@@ -12,6 +12,7 @@ public enum UserMessage {
     USER_POSTS_READ("작성한 게시글을 조회했습니다."),
     USER_COMMENTS_READ("작성한 댓글을 조회했습니다."),
     USER_REVIEWS_READ("작성한 리뷰를 조회했습니다."),
+    USER_GYMS_READ("저장한 암장을 조회했습니다."),
     USER_CREW_MEMBERS_READ("크루 일정 조회여부를 조회했습니다."),
     USER_MEETING_VIEWED_UPDATED("크루 일정 조회여부를 수정했습니다."),
     USER_MEETINGS_READ("다가오는 크루 일정을 조회했습니다."),

@@ -2,6 +2,7 @@ package org.orury.domain.gym.domain;
 
 import org.orury.domain.gym.domain.entity.Gym;
 import org.orury.domain.gym.domain.entity.GymLikePK;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ public interface GymReader {
     List<Gym> findGymsBySearchWord(String searchWord);
 
     List<Gym> findGymsInAreaGrid(Map<String, Double> gridMap);
+
+    List<Gym> findGymsByUserLiked(Long userId, Long cursor, Pageable pageRequest);
 
     boolean existsGymLikeById(GymLikePK gymLikePK);
 

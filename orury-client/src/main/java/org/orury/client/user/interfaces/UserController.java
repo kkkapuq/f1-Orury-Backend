@@ -81,6 +81,14 @@ public class UserController {
         return ApiResponse.of(UserMessage.USER_COMMENTS_READ.getMessage(), cursorResponse);
     }
 
+    @Operation(summary = "내가 저장한 암장목록 조회", description = "user_id로 내가 저장한 암장목록을 조회한다.")
+    @GetMapping("/gyms")
+    public ApiResponse getGymsByUserLiked(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestParam Long cursor) {
+        WithCursorResponse<MyGymResponse> cursorResponse = userFacade.getGymsByUserLiked(userPrincipal.id(), cursor);
+
+        return ApiResponse.of(UserMessage.USER_GYMS_READ.getMessage(), cursorResponse);
+    }
+
     @Operation(summary = "다가오는 크루일정 조회", description = "user_id로 다가오는 크루일정 목록을 조회한다.")
     @GetMapping("/meetings")
     public ApiResponse getMeetingsByUserId(@AuthenticationPrincipal UserPrincipal userPrincipal) {
