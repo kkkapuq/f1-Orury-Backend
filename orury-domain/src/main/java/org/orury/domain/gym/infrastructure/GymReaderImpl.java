@@ -1,9 +1,12 @@
 package org.orury.domain.gym.infrastructure;
 
 import lombok.RequiredArgsConstructor;
+import org.orury.domain.global.constants.NumberConstants;
 import org.orury.domain.gym.domain.GymReader;
 import org.orury.domain.gym.domain.entity.Gym;
+import org.orury.domain.gym.domain.entity.GymLike;
 import org.orury.domain.gym.domain.entity.GymLikePK;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -38,6 +41,16 @@ public class GymReaderImpl implements GymReader {
                 gridMap.get("left"),
                 gridMap.get("right")
         );
+    }
+
+    @Override
+    public List<Gym> findGymsByUserLiked(Long userId, Long cursor, Pageable pageRequest) {
+        List<GymLike> gymLikes = (cursor.equals(NumberConstants.FIRST_CURSOR))
+                ? gymLikeRepository.findByGymLikePK_UserIdOrderByGymLikePKDesc(userId, pageRequest)
+                : gymLikeRepository.findByGymLikePK_UserIdAndGymLikePK_GymIdLessThanOrderByGymLikePKDesc(userId, cursor, pageRequest);
+        return gymLikes.stream()
+                .map(gymLike -> gymRepository.findById(gymLike.getGymLikePK().getGymId()).orElse(null))
+                .toList();
     }
 
     @Override

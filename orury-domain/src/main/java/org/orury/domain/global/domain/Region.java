@@ -44,4 +44,13 @@ public enum Region {
         }
         return null;
     }
+
+    public static String getDescriptionFromAddress(String address) {
+        for (Region region : Region.values()) {
+            if (address.contains(region.getDescription())) {
+                return region.description;
+            }
+        }
+        return null;
+    }
 }

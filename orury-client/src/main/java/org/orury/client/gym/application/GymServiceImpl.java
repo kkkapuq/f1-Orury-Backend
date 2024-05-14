@@ -6,11 +6,13 @@ import org.orury.client.gym.interfaces.request.AreaGrid;
 import org.orury.common.error.code.GymErrorCode;
 import org.orury.common.error.exception.BusinessException;
 import org.orury.common.util.BusinessHoursConverter;
+import org.orury.domain.global.constants.NumberConstants;
 import org.orury.domain.gym.domain.GymReader;
 import org.orury.domain.gym.domain.GymStore;
 import org.orury.domain.gym.domain.dto.GymDto;
 import org.orury.domain.gym.domain.dto.GymLikeDto;
 import org.orury.domain.gym.domain.entity.Gym;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,16 @@ public class GymServiceImpl implements GymService {
     public List<GymDto> getGymDtosByAreaGridOrderByDistanceAsc(AreaGrid areaGrid, float latitude, float longitude) {
         var gyms = gymReader.findGymsInAreaGrid(areaGrid.toGridMap());
         return sortGymsByDistanceAsc(gyms, latitude, longitude);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GymDto> getGymDtosByUserLiked(Long userId, Long cursor) {
+        var pageRequest = PageRequest.of(0, NumberConstants.GYM_PAGINATION_SIZE);
+        return gymReader.findGymsByUserLiked(userId, cursor, pageRequest)
+                .stream()
+                .map(GymDto::from)
+                .toList();
     }
 
     @Override

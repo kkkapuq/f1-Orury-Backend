@@ -3,8 +3,11 @@ package org.orury.domain.gym.infrastructure;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.orury.domain.config.InfrastructureTest;
+import org.orury.domain.global.constants.NumberConstants;
 import org.orury.domain.gym.domain.entity.Gym;
 import org.orury.domain.gym.domain.entity.GymLikePK;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,12 +16,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.orury.domain.GymDomainFixture.TestGym.createGym;
+import static org.orury.domain.GymDomainFixture.TestGymLike.createGymLike;
 import static org.orury.domain.GymDomainFixture.TestGymLikePK.createGymLikePK;
 
 @DisplayName("[Reader] 암장 ReaderImpl 테스트")
@@ -138,6 +141,60 @@ class GymReaderImplTest extends InfrastructureTest {
         // then
         then(gymRepository).should(times(1))
                 .findByLatitudeBetweenAndLongitudeBetweenOrderByLikeCount(bottom, top, left, right);
+    }
+
+    @Test
+    @DisplayName("유저id로 좋아요한 암장 리스트를 반환한다. (첫 조회인 경우)")
+    void when_FirstGymsLikedByUser_Then_ReturnGymList() {
+        // given
+        Long userId = 1L;
+        Long cursor = NumberConstants.FIRST_CURSOR;
+        Pageable pageRequest = PageRequest.of(0, NumberConstants.GYM_PAGINATION_SIZE);
+
+        given(gymLikeRepository.findByGymLikePK_UserIdOrderByGymLikePKDesc(userId, pageRequest))
+                .willReturn(List.of(
+                        createGymLike(11L, userId).build().get(),
+                        createGymLike(10L, userId).build().get()
+                ));
+
+        given(gymRepository.findById(anyLong()))
+                .willReturn(Optional.of(createGym(1L).build().get()));
+
+        // when
+        gymReader.findGymsByUserLiked(userId, cursor, pageRequest);
+
+        // then
+        then(gymLikeRepository).should(times(1))
+                .findByGymLikePK_UserIdOrderByGymLikePKDesc(anyLong(), any(Pageable.class));
+        then(gymLikeRepository).should(times(0))
+                .findByGymLikePK_UserIdAndGymLikePK_GymIdLessThanOrderByGymLikePKDesc(anyLong(), anyLong(), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("유저id로 좋아요한 암장 리스트를 반환한다. (첫 조회가 아닌 경우)")
+    void when_GymsLikedByUser_Then_ReturnGymList() {
+        // given
+        Long userId = 1L;
+        Long cursor = 2L;
+        Pageable pageRequest = PageRequest.of(0, NumberConstants.GYM_PAGINATION_SIZE);
+
+        given(gymLikeRepository.findByGymLikePK_UserIdAndGymLikePK_GymIdLessThanOrderByGymLikePKDesc(userId, cursor, pageRequest))
+                .willReturn(List.of(
+                        createGymLike(11L, userId).build().get(),
+                        createGymLike(10L, userId).build().get()
+                ));
+
+        given(gymRepository.findById(anyLong()))
+                .willReturn(Optional.of(createGym(1L).build().get()));
+
+        // when
+        gymReader.findGymsByUserLiked(userId, cursor, pageRequest);
+
+        // then
+        then(gymLikeRepository).should(times(0))
+                .findByGymLikePK_UserIdOrderByGymLikePKDesc(anyLong(), any(Pageable.class));
+        then(gymLikeRepository).should(times(1))
+                .findByGymLikePK_UserIdAndGymLikePK_GymIdLessThanOrderByGymLikePKDesc(anyLong(), anyLong(), any(Pageable.class));
     }
 
     @Test
